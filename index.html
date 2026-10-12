@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Menú Digital Premium - Mesa 01</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50 font-sans pb-28">
+
+    <header class="bg-white shadow-md sticky top-0 z-40 border-b">
+        <div class="max-w-4xl mx-auto px-4 py-4 flex justify-between items-center">
+            <div class="flex items-center space-x-3">
+                <span class="text-2xl font-black text-red-600 bg-red-50 px-3 py-1 rounded-2xl tracking-tighter">PREMIUM</span>
+                <div>
+                    <h1 class="text-sm font-black text-gray-800">RESTAURANTE DIGITAL</h1>
+                    <p class="text-[10px] font-bold text-gray-400">Mesa 01 • Autogestión</p>
+                </div>
+            </div>
+            <button onclick="toggleCarritoModal()" class="flex items-center space-x-2 bg-red-600 text-white px-5 py-2.5 rounded-2xl font-black text-xs hover:bg-red-700 transition shadow-lg">
+                <span>🛒 <span id="contador-carrito">0</span> items</span>
+                <span class="border-l border-red-500 pl-2" id="total-header">\$0.00</span>
+            </button>
+        </div>
+    </header>
+
+    <main class="max-w-4xl mx-auto px-4 py-6 space-y-8">
+        <section>
+            <h2 class="text-xl font-black text-gray-800 mb-4 border-l-4 border-red-600 pl-3">Especialidades de la Casa</h2>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                
+                <div class="bg-white rounded-3xl shadow-sm p-5 flex justify-between items-center border border-gray-100 hover:shadow-md transition">
+                    <div class="flex items-center space-x-4">
+                        <div class="w-20 h-20 bg-red-50 rounded-2xl flex items-center justify-center text-4xl shadow-inner">🍗</div>
+                        <div>
+                            <h3 class="font-black text-gray-800 text-base">FESTIN DIPEO XL</h3>
+                            <p class="text-xs text-gray-400 max-w-[160px] mt-0.5">10 presas, 10 alitas, salsa especial y papas.</p>
+                            <span class="text-red-600 font-black text-lg mt-2 block">\$25.99</span>
+                        </div>
+                    </div>
+                    <button onclick="agregarAlCarrito('FESTIN DIPEO XL', 25.99)" class="bg-black text-white px-4 py-2.5 rounded-2xl text-xs font-black hover:bg-red-600 transition shadow">Añadir ➕</button>
+                </div>
+
+                <div class="bg-white rounded-3xl shadow-sm p-5 flex justify-between items-center border border-gray-100 hover:shadow-md transition">
+                    <div class="flex items-center space-x-4">
+                        <div class="w-20 h-20 bg-red-50 rounded-2xl flex items-center justify-center text-4xl shadow-inner">🍔</div>
+                        <div>
+                            <h3 class="font-black text-gray-800 text-base">Hamburguesa Angus</h3>
+                            <p class="text-xs text-gray-400 max-w-[160px] mt-0.5">Doble carne angus, queso cheddar fundido y bacon.</p>
+                            <span class="text-red-600 font-black text-lg mt-2 block">\$12.00</span>
+                        </div>
+                    </div>
+                    <button onclick="agregarAlCarrito('Hamburguesa Angus', 12.00)" class="bg-black text-white px-4 py-2.5 rounded-2xl text-xs font-black hover:bg-red-600 transition shadow">Añadir ➕</button>
+                </div>
+
+            </div>
+        </section>
+    </main>
+
+    <div id="carrito-modal" class="fixed inset-0 bg-black/60 z-50 hidden flex justify-end backdrop-blur-sm">
+        <div class="bg-white w-full max-w-md h-full flex flex-col justify-between p-6 shadow-2xl">
+            <div>
+                <div class="flex justify-between items-center border-b pb-4">
+                    <h2 class="text-xl font-black text-gray-800">TUS SELECCIONES</h2>
+                    <button onclick="toggleCarritoModal()" class="text-gray-400 hover:text-black font-bold text-xl">✕</button>
+                </div>
+                <ul id="lista-carrito-modal" class="divide-y max-h-[60vh] overflow-y-auto my-4 space-y-3"></ul>
+            </div>
+            <div class="border-t pt-4 space-y-3">
+                <div class="flex justify-between items-center font-black text-lg">
+                    <span>Total a Pagar:</span>
+                    <span id="modal-total-precio" class="text-red-600">\$0.00</span>
+                </div>
+                <button onclick="enviarPedido()" class="w-full bg-red-600 text-white py-4 rounded-2xl font-black text-sm hover:bg-red-700 transition shadow-lg">Confirmar Pedido a Cocina 🚀</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let carrito = [];
+
+        function agregarAlCarrito(nombre, precio) {
+            carrito.push({ nombre, precio });
+            actualizarUI();
+            alert(`¡${nombre} agregado con éxito!`);
+        }
+
+        function actualizarUI() {
+            let total = carrito.reduce((sum, item) => sum + item.precio, 0);
+            document.getElementById('contador-carrito').textContent = carrito.length;
+            document.getElementById('total-header').textContent = `$${total.toFixed(2)}`;
+            document.getElementById('modal-total-precio').textContent = `$${total.toFixed(2)}`;
+
+            let listaHtml = "";
+            if (carrito.length === 0) {
+                listaHtml = `<p class="text-gray-400 text-center py-12 text-xs font-bold">Tu carrito está vacío</p>`;
+            } else {
+                carrito.forEach((item, index) => {
+                    listaHtml += `
+                        <div class="flex justify-between items-center py-2">
+                            <div>
+                                <p class="font-bold text-sm text-gray-800">${item.nombre}</p>
+                                <span class="text-xs text-red-600 font-bold">$${item.precio.toFixed(2)}</span>
+                            </div>
+                            <button onclick="eliminarItem(${index})" class="text-gray-400 hover:text-red-600 text-xs font-bold">Eliminar</button>
+                        </div>
+                    `;
+                });
+            }
+            document.getElementById('lista-carrito-modal').innerHTML = listaHtml;
+        }
+
+        function eliminarItem(index) {
+            carrito.splice(index, 1);
+            actualizarUI();
+        }
+
+        function toggleCarritoModal() {
+            document.getElementById('carrito-modal').classList.toggle('hidden');
+        }
+
+        function enviarPedido() {
+            if (carrito.length === 0) {
+                alert("Agrega productos antes de enviar.");
+                return;
+            }
+
+            let pedidosPendientes = JSON.parse(localStorage.getItem('pedidos')) || [];
+            let nuevoPedido = {
+                id: Date.now(),
+                mesa: "Mesa 01",
+                items: [...carrito],
+                total: carrito.reduce((sum, item) => sum + item.precio, 0),
+                hora: new Date().toLocaleTimeString(),
+                estado: "En preparación"
+            };
+            
+            pedidosPendientes.push(nuevoPedido);
+            localStorage.setItem('pedidos', JSON.stringify(pedidosPendientes));
+
+            alert("¡Pedido enviado con éxito a la cocina!");
+            carrito = [];
+            actualizarUI();
+            toggleCarritoModal();
+        }
+    </script>
+</body>
+</html>
